@@ -17,8 +17,8 @@
 </template>
 
 <script setup>
-import Aside from "./components/Aside.vue";
-import Header from "./components/Header.vue";
+import Aside from "@/components/Aside.vue";
+import Header from "@/components/Header.vue";
 </script>
 
 <style lang="scss" scoped>
@@ -26,6 +26,9 @@ import Header from "./components/Header.vue";
   .el-header {
     padding: 0;
     height: auto;
+  }
+  .el-main {
+    background-color: #e5ebf2;
   }
 }
 </style>
