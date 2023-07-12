@@ -104,6 +104,7 @@ const stuInfo = [
 ]
 
 const activeName = ref('now');
+
 </script>
 
 <style lang="scss" scoped>
