@@ -42,6 +42,14 @@ export default [
             {
                 path: '/train-info',
                 component: () => import('@/views/TrainInfo/index.vue')
+            },
+            {
+                path: '/rating-line',
+                component: () => import('@/components/RatingLine/index.vue')
+            },
+            {
+                path: '/tag-polor',
+                component: () => import('@/components/TagPolor/index.vue')
             }
         ]
     }
