@@ -34,6 +34,7 @@
         <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[10, 20, 50, 100]"
             :background="background" layout="sizes, prev, pager, next" :total="1000" @size-change="handleSizeChange"
             @current-change="handleCurrentChange" />
+            
     </div>
 </template>
 
