@@ -31,17 +31,15 @@
                 </el-table>
             </el-tab-pane>
         </el-tabs>
-        <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[10, 20, 50, 100]"
-            :background="background" layout="sizes, prev, pager, next" :total="1000" @size-change="handleSizeChange"
-            @current-change="handleCurrentChange" />
-            
+        <el-pagination v-model:current-page="page_num" v-model:page-size="page_size" :page-sizes="[10, 20, 50, 100]"
+            background layout="sizes, prev, pager, next" :total="total" />
     </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import { Search } from '@element-plus/icons-vue';
-import {useRouter} from 'vue-router';
+import { useRouter } from 'vue-router';
 const router = useRouter();
 
 const showInfo = [
@@ -116,12 +114,14 @@ const stuInfo = [
         nc: 0,
         ncRating: 9,
         jsk: 0,
-    },
+    }
 ];
 
 const activeName = ref("now");
-const currentPage = ref(1);
-const pageSize = ref(10);
+const searchInput = ref('');
+const page_num = ref(1);
+const page_size = ref(10);
+const total = ref(1000);
 
 const handleSearch = () => {
     console.log(132);
@@ -144,6 +144,7 @@ const gotoTagPolor = () => {
         display: flex;
         justify-content: space-between;
         margin-bottom: 15px;
+
         :deep(.el-input-group__append) {
             background-color: #409eff;
         }
