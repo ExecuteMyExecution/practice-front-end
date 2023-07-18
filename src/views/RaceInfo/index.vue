@@ -23,56 +23,43 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 import { Search } from '@element-plus/icons-vue';
-import { useRouter } from 'vue-router';
-const router = useRouter();
+import {getRaceInfo} from '@/api/index';
 
 const showInfo = [
-    "cId",
-    "ContestName",
+    "id",
+    "name",
     "Index",
     "Name",
     "Tags",
     "Difficulty"
 ];
-const raceInfo = [
-    {
-        cId: 1691,
-        ContestName: "CodeCraft-22 and Codeforces Round #795(Div. 2)",
-        Index: "A",
-        Name: "Beat The Odds",
-        Tags: "greedy",
-        Difficulty: -1,
-        view: 1000,
-        submit: 88
-    },
-    {
-        cId: 1691,
-        ContestName: "CodeCraft-22 and Codeforces Round #795(Div. 2)",
-        Index: "A",
-        Name: "Beat The Odds",
-        Tags: "greedy",
-        Difficulty: -1,
-        view: 1000,
-        submit: 88
-    },
-    {
-        cId: 1691,
-        ContestName: "CodeCraft-22 and Codeforces Round #795(Div. 2)",
-        Index: "A",
-        Name: "Beat The Odds",
-        Tags: "greedy",
-        Difficulty: -1,
-        view: 1000,
-        submit: 88
-    }
-];
+let raceInfo = [];
 
 const searchInput = ref('');
 const page_num = ref(1);
 const page_size = ref(10);
 const total = ref(1000);
+
+// onMounted(() => {
+// })
+
+const init = async () => {
+    const params = {
+        page: page_num.value,
+        pagesize: page_size.value 
+    }
+    let res = await getRaceInfo(params);
+    console.log('res', res);
+    if (res.data.msg == 'success') {
+        raceInfo = res.data.data.rows;
+        console.log('g', res.data.data);
+        console.log('gg', JSON.parse(JSON.stringify(raceInfo)));
+    }
+}
+
+init();
 
 const handleSearch = () => {
     console.log(132);
