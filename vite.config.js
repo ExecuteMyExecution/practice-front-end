@@ -24,7 +24,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/accoder': {
+      '/atcoder': {
         target: 'http://8.140.195.25:8080', //这是你要跨域请求的地址前缀
         changeOrigin: true //开启跨域
       }

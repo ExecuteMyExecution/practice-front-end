@@ -10,7 +10,7 @@
         <el-table :data="raceInfo" border stripe style="width: 100%">
             <el-table-column type="selection" width="55" />
             <el-table-column v-for="(item, index) of showInfo" :key="index" :prop="item" :label="item" />
-            <el-table-column label="Operations">
+            <el-table-column label="Operations" width="180">
                 <template #default="scope">
                     <el-button size="small" @click="handleView(scope.row)">View</el-button>
                     <el-button size="small" type="primary" @click="handleSubmit(scope.row)">Submit</el-button>
@@ -28,34 +28,44 @@ import { Search } from '@element-plus/icons-vue';
 import {getRaceInfo} from '@/api/index';
 
 const showInfo = [
-    "id",
-    "name",
-    "Index",
-    "Name",
-    "Tags",
-    "Difficulty"
+    'id',
+    'name',
+    'level',
+    'type',
+    'startTime',
+    'endTime',
+    'duration',
+    'participate'
 ];
-let raceInfo = [];
+let raceInfo = ref(null);
 
 const searchInput = ref('');
 const page_num = ref(1);
 const page_size = ref(10);
 const total = ref(1000);
 
-// onMounted(() => {
-// })
+const second2hour = (time) => {
+    let hour = Math.floor(time / 3600);
+    let minute = Math.floor(time / 60) % 60;
+    let seconde = Math.floor(time % 60);
+    return hour + ":" + minute + ":" + seconde;
+}
 
 const init = async () => {
     const params = {
         page: page_num.value,
-        pagesize: page_size.value 
-    }
+        pagesize: page_size.value
+    };
     let res = await getRaceInfo(params);
     console.log('res', res);
+    let rows = res.data.data.rows.map(item => {
+        item.startTime = new Date(item.startTimeStamp);
+        item.endTime = new Date(item.endTimeStamp);
+        item.duration = second2hour(item.duration);
+        return item;
+    });
     if (res.data.msg == 'success') {
-        raceInfo = res.data.data.rows;
-        console.log('g', res.data.data);
-        console.log('gg', JSON.parse(JSON.stringify(raceInfo)));
+        raceInfo.value = rows;
     }
 }
 
