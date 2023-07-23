@@ -26,16 +26,14 @@
 <script setup>
 import { ref } from "vue";
 import { Search } from '@element-plus/icons-vue';
-import { getRaceInfo } from '@/api/index';
+import { getProblemInfo } from '@/api/index';
 
 const showInfo = [
+    'cid',
     'name',
-    'level',
-    'type',
-    'startTime',
-    'endTime',
-    'duration',
-    'participate'
+    'qindex',
+    'tags',
+    'difficulty'
 ];
 let raceInfo = ref(null);
 let searchInput = ref('');
@@ -43,54 +41,25 @@ let page_num = ref(1);
 let page_size = ref(10);
 let total = ref(1000);
 
-const second2hour = (time) => {
-    let hour = Math.floor(time / 3600);
-    let minute = Math.floor(time / 60) % 60;
-    let seconde = Math.floor(time % 60);
-    return hour + ":" + minute + ":" + seconde;
-}
-const timeFormat = (time) => {
-    return time >= 10 ? time : '0' + time;
-}
-const date2day = (date) => {
-    let year = date.getFullYear();
-    let month = timeFormat(date.getMonth() + 1);
-    let day = timeFormat(date.getDay());
-    let hour = date.getHours();
-    let minute = timeFormat(date.getMinutes());
-    let second = timeFormat(date.getMinutes());
-    return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
-}
-
 const init = async () => {
     const params = {
-        page: page_num.value,
-        pagesize: page_size.value
+        cid: searchInput.value ? searchInput.value : 0
     };
-    let res = await getRaceInfo(params);
-    let rows = res.data.data.rows.map(item => {
-        item.startTime = date2day(new Date(item.startTimeStamp * 1000));
-        item.endTime = date2day(new Date(item.endTimeStamp * 1000));
-        item.duration = second2hour(item.duration);
-        return item;
-    });
+    let res = await getProblemInfo(params);
     if (res.data.msg == 'success') {
-        raceInfo.value = rows;
-        total = res.data.data.total;
+        raceInfo.value = res.data.data;
+        total = res.data.data.length;
     }
 }
 
 init();
 
-const handleSizeChange = () => {
-    init()
-}
-const handleCurrentChange = () => {
-    init()
-}
-
 const handleSearch = () => {
-    console.log(132);
+    init();
+}
+const handleView = async (row) => {
+    let res = await seeCode(row.name);
+    console.log('row', res);
 }
 </script>
 

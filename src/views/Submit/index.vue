@@ -8,47 +8,43 @@
             </el-input>
         </header>
         <el-table :data="raceInfo" border stripe style="width: 100%">
-            <el-table-column type="selection" width="55" />
-            <el-table-column v-for="(item, index) of showInfo" :key="index" :prop="item" :label="item" />
-            <el-table-column label="Operations" width="180">
+            <el-table-column v-for="(item, index) of showInfo" :key="index" :prop="item" :label="item" sortable />
+            <el-table-column fixed="right" label="Operations" width="120">
                 <template #default="scope">
-                    <el-button size="small" @click="handleView(scope.row)">View</el-button>
-                    <el-button size="small" type="primary" @click="handleSubmit(scope.row)">Submit</el-button>
+                    <el-button type="primary" size="small" @click.prevent="showCode(scope.row)">
+                        view
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
         <el-pagination v-model:current-page="page_num" v-model:page-size="page_size" :page-sizes="[10, 20, 50, 100]"
-            layout="sizes, prev, pager, next" :total="total" @size-change="handleSizeChange"
-            @current-change="handleCurrentChange" />
+            layout="sizes, prev, pager, next" :total="total" @current-change="handleCurrentChange"
+            @size-change="handleSizeChange" />
     </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import { Search } from '@element-plus/icons-vue';
-import { getRaceInfo } from '@/api/index';
+import { seeCode } from '@/api/index';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const showInfo = [
-    'name',
-    'level',
-    'type',
-    'startTime',
-    'endTime',
-    'duration',
-    'participate'
+    "cfId",
+    "status",
+    "submitTime",
+    "language",
+    "isAfter",
+    "qindex",
 ];
 let raceInfo = ref(null);
+
 let searchInput = ref('');
 let page_num = ref(1);
 let page_size = ref(10);
-let total = ref(1000);
+let total = ref(11005);
 
-const second2hour = (time) => {
-    let hour = Math.floor(time / 3600);
-    let minute = Math.floor(time / 60) % 60;
-    let seconde = Math.floor(time % 60);
-    return hour + ":" + minute + ":" + seconde;
-}
 const timeFormat = (time) => {
     return time >= 10 ? time : '0' + time;
 }
@@ -67,30 +63,34 @@ const init = async () => {
         page: page_num.value,
         pagesize: page_size.value
     };
-    let res = await getRaceInfo(params);
+    let res = await seeCode(params);
     let rows = res.data.data.rows.map(item => {
-        item.startTime = date2day(new Date(item.startTimeStamp * 1000));
-        item.endTime = date2day(new Date(item.endTimeStamp * 1000));
-        item.duration = second2hour(item.duration);
+        item.submitTime = date2day(new Date(item.submitTime * 1000));
         return item;
     });
     if (res.data.msg == 'success') {
         raceInfo.value = rows;
-        total = res.data.data.total;
     }
 }
 
 init();
 
+const handleSearch = () => {
+    console.log(132);
+}
+const showCode = (row) => {
+    router.push({
+        name: 'code',
+        params: {
+            code: row.submitCode || 'Not Found'
+        }
+    });
+}
 const handleSizeChange = () => {
     init()
 }
 const handleCurrentChange = () => {
     init()
-}
-
-const handleSearch = () => {
-    console.log(132);
 }
 </script>
 

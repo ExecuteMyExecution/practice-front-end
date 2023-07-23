@@ -44,12 +44,37 @@ export default [
                 component: () => import('@/views/TrainInfo/index.vue')
             },
             {
-                path: '/rating-line',
+                path: '/rating-line/:realname',
+                name: 'rating-line',
                 component: () => import('@/components/RatingLine/index.vue')
             },
             {
                 path: '/tag-polor',
                 component: () => import('@/components/TagPolor/index.vue')
+            },
+            {
+                path: '/problem/:cid',
+                component: () => import('@/views/Problem/index.vue')
+            },
+            {
+                path: '/submit',
+                name: 'submit',
+                component: () => import('@/views/Submit/index.vue')
+            },
+            {
+                path: '/code/:code',
+                name: 'code',
+                component: () => import('@/views/Code/index.vue')
+            },
+            {
+                path: '/cansai/:name',
+                name: 'cansai',
+                component: () => import('@/views/Cansai/index.vue')
+            },
+            {
+                path: '/user/:realname',
+                name: 'user',
+                component: () => import('@/views/User/index.vue')
             }
         ]
     }

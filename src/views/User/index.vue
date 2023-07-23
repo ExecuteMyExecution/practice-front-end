@@ -8,17 +8,16 @@
             </el-input>
         </header>
         <el-table :data="raceInfo" border stripe style="width: 100%">
-            <el-table-column type="selection" width="55" />
-            <el-table-column v-for="(item, index) of showInfo" :key="index" :prop="item" :label="item" />
-            <el-table-column label="Operations" width="180">
+            <el-table-column prop="name" label="name" sortable>
                 <template #default="scope">
-                    <el-button size="small" @click="handleView(scope.row)">View</el-button>
-                    <el-button size="small" type="primary" @click="handleSubmit(scope.row)">Submit</el-button>
+                    <span @click="goDetail(scope.row)" style="color: #409eff; cursor: pointer;">{{
+                        raceInfo[scope.$index].name }}</span>
                 </template>
             </el-table-column>
+            <el-table-column v-for="(item, index) of showInfo" :key="index" :prop="item" :label="item" sortable />
         </el-table>
         <el-pagination v-model:current-page="page_num" v-model:page-size="page_size" :page-sizes="[10, 20, 50, 100]"
-            layout="sizes, prev, pager, next" :total="total" @size-change="handleSizeChange"
+            layout="total, sizes, prev, pager, next" :total="total" @size-change="handleSizeChange"
             @current-change="handleCurrentChange" />
     </div>
 </template>
@@ -26,18 +25,20 @@
 <script setup>
 import { ref } from "vue";
 import { Search } from '@element-plus/icons-vue';
-import { getRaceInfo } from '@/api/index';
+import { getRecnetRaceInfo } from '@/api/index';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const showInfo = [
-    'name',
-    'level',
-    'type',
-    'startTime',
-    'endTime',
-    'duration',
-    'participate'
+    "type",
+    "level",
+    "startTime",
+    "endTime",
+    "duration",
+    "participate",
 ];
 let raceInfo = ref(null);
+
 let searchInput = ref('');
 let page_num = ref(1);
 let page_size = ref(10);
@@ -67,21 +68,32 @@ const init = async () => {
         page: page_num.value,
         pagesize: page_size.value
     };
-    let res = await getRaceInfo(params);
+    let res = await getRecnetRaceInfo(params);
     let rows = res.data.data.rows.map(item => {
-        item.startTime = date2day(new Date(item.startTimeStamp * 1000));
-        item.endTime = date2day(new Date(item.endTimeStamp * 1000));
+        item.startTime = date2day(new Date(item.start_time_stamp * 1000));
+        item.endTime = date2day(new Date(item.end_time_stamp * 1000));
         item.duration = second2hour(item.duration);
         return item;
     });
     if (res.data.msg == 'success') {
         raceInfo.value = rows;
-        total = res.data.data.total;
+        total.value = res.data.data.total;
     }
 }
 
 init();
 
+const handleSearch = () => {
+    console.log(132);
+}
+const goDetail = async (row) => {
+    router.push({
+        name: 'cansai',
+        params: {
+            name: row.name
+        }
+    });
+}
 const handleSizeChange = () => {
     init()
 }
@@ -89,9 +101,6 @@ const handleCurrentChange = () => {
     init()
 }
 
-const handleSearch = () => {
-    console.log(132);
-}
 </script>
 
 <style lang="scss" scoped>

@@ -31,9 +31,13 @@ const showInfo = {
     password: '密码',
     realname: '用户名',
     school: '学校',
-    status: '',
+    status: 'AcID',
     stuno: '学号',
     year: '年级',
+    a: 'cfID',
+    b: 'VjID',
+    c: '牛客ID',
+    d: 'jskID'
 }
 const form = reactive({
     username: '',

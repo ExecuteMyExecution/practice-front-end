@@ -16,7 +16,7 @@ const router = useRouter();
 
 const menu = [
   { text: '主页', path: '/home', icon: HomeFilled },
-  { text: '比赛信息', path: '/race-info', icon: Flag },
+  { text: '题目信息', path: '/race-info', icon: Flag },
   { text: '近期比赛统计', path: '/recent-race', icon: TrendCharts },
   { text: '比赛反馈', path: '/race-feedback', icon: Comment },
   { text: '比赛安排', path: '/race-arrange', icon: List },
@@ -32,9 +32,12 @@ const goto = (path) => {
 </script>
 
 <style lang="scss" scoped>
-.icon {
-  width: 16px;
-  height: 16px;
-  margin-right: 8px;
+.el-menu {
+  height: 100%;
+  .icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+  }
 }
 </style>

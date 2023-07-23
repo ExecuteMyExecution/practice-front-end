@@ -1,38 +1,23 @@
 <template>
     <div class="container">
-        <el-tabs v-model="activeName" class="demo-tabs">
-            <header class="commonHeader">
-                <el-input v-model="searchInput" placeholder="Please input" style="width: 300px;">
-                    <template #append>
-                        <el-button :icon="Search" type="primary" @click="handleSearch" />
-                    </template>
-                </el-input>
-                <div class="data-button">
-                    <el-button type="primary" @click="gotoRatingLine">CFRatingLine</el-button>
-                    <el-button type="primary" @click="gotoTagPolor">CFTagPolor</el-button>
-                </div>
-            </header>
-            <el-tab-pane label="现役" name="now">
-                <el-table :data="stuInfo" border stripe style="width: 100%">
-                    <el-table-column type="selection" width="55" />
-                    <el-table-column v-for="(item, index) of showInfo" :key="index" :prop="item" :label="item" />
-                </el-table>
-            </el-tab-pane>
-            <el-tab-pane label="退役" name="before">
-                <el-table :data="stuInfo" border stripe style="width: 100%">
-                    <el-table-column type="selection" width="55" />
-                    <el-table-column v-for="(item, index) of showInfo" :key="index" :prop="item" :label="item" />
-                </el-table>
-            </el-tab-pane>
-            <el-tab-pane label="所有" name="all">
-                <el-table :data="stuInfo" border stripe style="width: 100%">
-                    <el-table-column type="selection" width="55" />
-                    <el-table-column v-for="(item, index) of showInfo" :key="index" :prop="item" :label="item" />
-                </el-table>
-            </el-tab-pane>
-        </el-tabs>
+        <header class="commonHeader">
+            <el-input v-model="searchInput" placeholder="Please input" style="width: 300px;">
+                <template #append>
+                    <el-button :icon="Search" type="primary" @click="handleSearch" />
+                </template>
+            </el-input>
+            <div class="data-button">
+                <el-button type="primary" @click="gotoRatingLine">CFRatingLine</el-button>
+                <el-button type="primary" @click="gotoTagPolor">CFTagPolor</el-button>
+            </div>
+        </header>
+        <el-table :data="showStuInfo" border stripe style="width: 100%" @selection-change="handleSelectionChange">
+            <el-table-column type="selection" width="55" />
+            <el-table-column v-for="(item, index) of showInfo" :key="index" :prop="item" :label="item" />
+        </el-table>
         <el-pagination v-model:current-page="page_num" v-model:page-size="page_size" :page-sizes="[10, 20, 50, 100]"
-            background layout="sizes, prev, pager, next" :total="total" />
+            background layout="total, sizes, prev, pager, next" :total="total" @size-change="handleSizeChange"
+            @current-change="handleCurrentChange" />
     </div>
 </template>
 
@@ -40,97 +25,69 @@
 import { ref } from "vue";
 import { Search } from '@element-plus/icons-vue';
 import { useRouter } from 'vue-router';
+import { getStuInfo } from '@/api/index';
 const router = useRouter();
 
 const showInfo = [
-    "stuNO",
+    'id',
     "realname",
     "classname",
-    "sex",
-    "school",
     "year",
     "cfRating",
-    "cf",
-    "cf++",
+    "cfParticipateTime",
+    "cfSolve",
+    "cfAfter",
     "acRating",
-    "ac",
-    "ac++",
-    "vj",
-    "nc",
-    "ncRating",
-    "jsk",
+    "acParticipateTime",
+    "acSolve",
+    "acAfter"
 ];
-const stuInfo = [
-    {
-        stuNO: "2019010317",
-        realname: "姚宗宇",
-        classname: "计科2003",
-        sex: "男",
-        school: "北京化工大学",
-        year: 2019,
-        cfRating: 1000,
-        cf: 88,
-        "cf++": "245/298",
-        acRating: 0,
-        ac: 20,
-        "ac++": "1/3",
-        vj: "",
-        nc: 0,
-        ncRating: 9,
-        jsk: 0,
-    },
-    {
-        stuNO: "2019010317",
-        realname: "姚宗宇",
-        classname: "计科2003",
-        sex: "男",
-        school: "北京化工大学",
-        year: 2019,
-        cfRating: 1000,
-        cf: 88,
-        "cf++": "245/298",
-        acRating: 0,
-        ac: 20,
-        "ac++": "1/3",
-        vj: "",
-        nc: 0,
-        ncRating: 9,
-        jsk: 0,
-    },
-    {
-        stuNO: "2019010317",
-        realname: "姚宗宇",
-        classname: "计科2003",
-        sex: "男",
-        school: "北京化工大学",
-        year: 2019,
-        cfRating: 1000,
-        cf: 88,
-        "cf++": "245/298",
-        acRating: 0,
-        ac: 20,
-        "ac++": "1/3",
-        vj: "",
-        nc: 0,
-        ncRating: 9,
-        jsk: 0,
+let stuInfo = ref(null);
+let showStuInfo = ref(null);
+const multipleSelection = ref([null]);
+let searchInput = ref('');
+let page_num = ref(1);
+let page_size = ref(10);
+let total = ref(1000);
+
+const init = async () => {
+    const params = {
+        page: page_num.value,
+        pagesize: page_size.value
+    };
+    let res = await getStuInfo(params);
+    if (res.data.msg == 'success') {
+        stuInfo.value = res.data.data.rows;
+        total.value = res.data.data.total;
+        showStuInfo.value = stuInfo.value;
     }
-];
+}
 
-const activeName = ref("now");
-const searchInput = ref('');
-const page_num = ref(1);
-const page_size = ref(10);
-const total = ref(1000);
+init();
 
+const handleSelectionChange = (val) => {
+  multipleSelection.value = val
+}
 const handleSearch = () => {
-    console.log(132);
+    if (searchInput.value === '') {
+        showStuInfo.value = stuInfo.value;
+    } else {
+        showStuInfo.value = stuInfo.value.filter(item => item.realname === searchInput.value);
+    }
 }
 const gotoRatingLine = () => {
-    router.push('/rating-line');
+    router.push({
+        name: 'rating-line',
+        params: {
+            realname: multipleSelection.value[0].realname
+        }
+    });
 }
-const gotoTagPolor = () => {
-    router.push('/tag-polor');
+const handleSizeChange = () => {
+    init()
+}
+const handleCurrentChange = () => {
+    init()
 }
 </script>
 

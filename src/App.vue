@@ -2,11 +2,11 @@
   <div class="common-layout">
     <el-container>
       <el-header>
-        <Header/>
+        <Header />
       </el-header>
       <el-container>
         <el-aside width="200px">
-          <Aside/>
+          <Aside />
         </el-aside>
         <el-main>
           <router-view></router-view>
@@ -23,12 +23,19 @@ import Header from "@/components/Header/index.vue";
 
 <style lang="scss" scoped>
 .common-layout {
-  .el-header {
-    padding: 0;
-    height: auto;
+  height: 100%;
+
+  .el-container {
+    height: 100%;
+
+    .el-header {
+      padding: 0;
+      height: auto;
+    }
+
+    .el-main {
+      background-color: #e5ebf2;
+      overflow: auto;
+    }
   }
-  .el-main {
-    background-color: #e5ebf2;
-  }
-}
-</style>
+}</style>

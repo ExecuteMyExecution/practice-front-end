@@ -18,61 +18,57 @@
             </el-table-column>
         </el-table>
         <el-pagination v-model:current-page="page_num" v-model:page-size="page_size" :page-sizes="[10, 20, 50, 100]"
-            layout="sizes, prev, pager, next" :total="total" />
+            layout="total, sizes, prev, pager, next" :total="total" @size-change="handleSizeChange"
+            @current-change="handleCurrentChange" />
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from "vue";
+import { ref } from "vue";
 import { Search } from '@element-plus/icons-vue';
-import {getRaceInfo} from '@/api/index';
+import { getProblemInfo } from '@/api/index';
 
 const showInfo = [
-    'id',
+    'cid',
     'name',
-    'level',
-    'type',
-    'startTime',
-    'endTime',
-    'duration',
-    'participate'
+    'qindex',
+    'problemName',
+    'tags',
+    'difficulty'
 ];
 let raceInfo = ref(null);
-
-const searchInput = ref('');
-const page_num = ref(1);
-const page_size = ref(10);
-const total = ref(1000);
-
-const second2hour = (time) => {
-    let hour = Math.floor(time / 3600);
-    let minute = Math.floor(time / 60) % 60;
-    let seconde = Math.floor(time % 60);
-    return hour + ":" + minute + ":" + seconde;
-}
+let searchInput = ref('');
+let page_num = ref(1);
+let page_size = ref(10);
+let total = ref(1000);
 
 const init = async () => {
     const params = {
-        page: page_num.value,
-        pagesize: page_size.value
+        cid: searchInput.value ? searchInput.value : 0
     };
-    let res = await getRaceInfo(params);
-    console.log('res', res);
-    let rows = res.data.data.rows.map(item => {
-        item.startTime = new Date(item.startTimeStamp);
-        item.endTime = new Date(item.endTimeStamp);
-        item.duration = second2hour(item.duration);
-        return item;
-    });
+    let res = await getProblemInfo(params);
     if (res.data.msg == 'success') {
-        raceInfo.value = rows;
+        raceInfo.value = res.data.data;
+        total.value = res.data.data.length;
     }
 }
 
 init();
 
 const handleSearch = () => {
-    console.log(132);
+    init();
+}
+const handleSizeChange = () => {
+    init()
+}
+const handleCurrentChange = () => {
+    init()
+}
+const handleView = async (row) => {
+    window.open(`https://codeforces.com/contest/${row.cid}/problem/${row.qindex}`)
+}
+const handleSubmit = (row) => {
+    window.open(`https://codeforces.com/contest/${row.cid}/problem/${row.qindex}`)
 }
 </script>
 
